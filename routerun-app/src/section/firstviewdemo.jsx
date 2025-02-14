@@ -1,8 +1,6 @@
-import { useEffect, useState } from "react";
-import axios from "axios";
+import { useEffect } from "react";
 
 export const FirstViewDemo = () => {
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   useEffect(() => {
     if (!navigator.geolocation) {
       console.error("Geolocation はこのブラウザでサポートされていません。");
@@ -21,5 +19,5 @@ export const FirstViewDemo = () => {
     );
   }, []);
 
-  return <div>testmessage</div>;
+  return <div className="text-red-500">testmessage</div>;
 };
