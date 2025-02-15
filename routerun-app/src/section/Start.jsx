@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import PropTypes from 'prop-types';
 
 export const Start = ({ setLocation }) => {
   useEffect(() => {
@@ -20,4 +21,8 @@ export const Start = ({ setLocation }) => {
   }, [setLocation]);
 
   return <div className="text-red-500">testmessage</div>;
+};
+
+Start.propTypes = {
+  setLocation: PropTypes.func.isRequired,
 };
