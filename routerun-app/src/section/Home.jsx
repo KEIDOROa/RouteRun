@@ -6,7 +6,6 @@ export const Home = ({ location }) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 
-  // Googleマップの初期化関数を useCallback でメモ化
   const initializeMap = useCallback(() => {
     if (!mapRef.current || !window.google || !window.google.maps) {
       console.error("Google Maps API がまだロードされていません。");
@@ -33,7 +32,6 @@ export const Home = ({ location }) => {
       return;
     }
 
-    // Google Maps API スクリプトを追加（重複を防ぐ）
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker&loading=async`;
@@ -45,9 +43,9 @@ export const Home = ({ location }) => {
     window.initMap = initializeMap;
 
     return () => {
-      delete window.initMap; // クリーンアップ
+      delete window.initMap;
     };
-  }, [location, apiKey, mapId, initializeMap]); // 依存配列に initializeMap を追加
+  }, [location, apiKey, mapId, initializeMap]);
 
   return <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
 };
