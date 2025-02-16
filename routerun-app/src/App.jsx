@@ -12,7 +12,7 @@ export default function App() {
       <h1>Google Maps 現在地表示</h1>
       <Start setLocation={setLocation} />
       {location ? <Home location={location} /> : <p>現在地を取得中...</p>}
-      {/* <RoundTripTest /> */}
+      <RoundTripTest />
       <RoundTripMap />
     </div>
   );

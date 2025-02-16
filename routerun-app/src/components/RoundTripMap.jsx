@@ -41,7 +41,7 @@ export const RoundTripMap = ({ origin, distance, seed }) => {
         };
 
         fetchRoute();
-    }, [origin, distance, seed]);
+    }, [graphHopperKey, origin, distance, seed]);
 
     return (
         <div>

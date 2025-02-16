@@ -42,11 +42,11 @@ export const RoundTripTest = () => {
         };
 
         fetchRoute();
-    }, []);
+    }, [graphHopperKey, origin.lat, origin.lng]);
 
     return (
         <div>
-            <h2>GraphHopper API レスポンス　テスト</h2>
+            <h2>GraphHopper API レスポンステスト</h2>
             {error ? <p style={{ color: "red" }}>{error}</p> : null}
             <pre style={{ whiteSpace: "pre-wrap", wordBreak: "break-word" }}>
                 {routeData ? JSON.stringify(routeData, null, 2) : "データ取得中..."}
