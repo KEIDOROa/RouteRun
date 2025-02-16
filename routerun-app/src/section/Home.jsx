@@ -32,6 +32,7 @@ export const Home = ({ location }) => {
       return;
     }
 
+
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker&loading=async`;
