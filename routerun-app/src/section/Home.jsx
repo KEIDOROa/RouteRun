@@ -33,7 +33,12 @@ const Home = ({ location }) => {
     }
   }, [location, apiKey]);
 
-  return <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
+  return (
+    <div>
+      <h1>Home</h1>
+      <div ref={mapRef} style={{ width: "100%", height: 400 }} />
+    </div>
+  );
 };
 
 export default Home;
