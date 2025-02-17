@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 
-export const Start = ({ setLocation }) => {
+const Start = ({ setLocation }) => {
   useEffect(() => {
     if (!navigator.geolocation) {
       console.error("Geolocation はこのブラウザでサポートされていません。");
@@ -21,3 +21,5 @@ export const Start = ({ setLocation }) => {
 
   return <div className="text-red-500">testmessage</div>;
 };
+
+export default Start;

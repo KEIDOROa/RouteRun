@@ -1,3 +1,5 @@
-export const Goal = () => {
-  return <></>;
-};
+function Goal() {
+  return <div></div>;
+}
+
+export default Goal;

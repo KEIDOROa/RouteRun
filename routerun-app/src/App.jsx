@@ -1,15 +1,38 @@
-import { useState } from "react";
-import { Start } from "./section/Start";
-import { Home } from "./section/Home";
+import "./App.css";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import Home from "./section/Home";
+import Start from "./section/Start";
+import Goal from "./section/Goal";
 
-export default function App() {
-  const [location, setLocation] = useState(null);
-
+function App() {
   return (
     <div>
-      <h1>Google Maps 現在地表示</h1>
-      <Start setLocation={setLocation} />
-      {location ? <Home location={location} /> : <p>現在地を取得中...</p>}
+      <h1>RouteRun</h1>
+      <nav>
+        <ul>
+          <li>
+            <a href="/">route</a>
+          </li>
+          <li>
+            <a href="/home">Home</a>
+          </li>
+          <li>
+            <a href="/start">Start</a>
+          </li>
+          <li>
+            <a href="/goal">Goal</a>
+          </li>
+        </ul>
+      </nav>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/home" element={<Home />} />
+          <Route path="/start" element={<Start />} />
+          <Route path="/goal" element={<Goal />} />
+        </Routes>
+      </BrowserRouter>
     </div>
   );
 }
+
+export default App;
