@@ -1,4 +1,5 @@
 import { useEffect, useRef, useCallback } from "react";
+import { RoundTripMap } from "../components/RoundTripMap";
 import PropTypes from "prop-types";
 
 export const Home = ({ location }) => {
@@ -25,13 +26,15 @@ export const Home = ({ location }) => {
   }, [location, mapId]);
 
   useEffect(() => {
+    //１，距離質問
+    //２．postしてルート作成
+    //３．確定ボタン押したらルート案内開始
     if (!location || !apiKey || !mapId) return;
 
     if (window.google && window.google.maps) {
       initializeMap();
       return;
     }
-
 
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       const script = document.createElement("script");
@@ -47,8 +50,13 @@ export const Home = ({ location }) => {
       delete window.initMap;
     };
   }, [location, apiKey, mapId, initializeMap]);
+  // <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
 
-  return <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
+  return (
+    <>
+      <RoundTripMap origin={location} distance={"1000"} />
+    </>
+  );
 };
 
 Home.propTypes = {
