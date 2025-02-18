@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
 import axios from "axios";
@@ -25,7 +25,6 @@ export const RoundTripMap = ({ distance, routeData }) => {
     };
 
     try {
-      console.log("生成開");
       const response = await axios.get(url, {
         params,
         headers: {
@@ -48,6 +47,12 @@ export const RoundTripMap = ({ distance, routeData }) => {
     }
   };
 
+  useEffect(() => {
+    if (distance && location) {
+      makeroute();
+    }
+  }, [distance, location]);
+
   const makeroute = () => {
     if (!graphHopperKey) {
       console.warn("GraphHopper APIキーが設定されていません");
@@ -59,17 +64,7 @@ export const RoundTripMap = ({ distance, routeData }) => {
     fetchRoute();
   };
 
-  return (
-    <div>
-      <FetchLocation setLocation={setlocation} />
-      <h2>ルートデータ</h2>
-      <button onClick={makeroute}>再生成</button>
-      <p>{routeData ? "ルート取得完了" : "ルート未取得"}</p>
-      <hr />
-      <hr />
-      <hr />
-    </div>
-  );
+  return <FetchLocation setLocation={setlocation} />;
 };
 
 RoundTripMap.propTypes = {

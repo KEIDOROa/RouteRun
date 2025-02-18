@@ -21,7 +21,6 @@ export const FetchLocation = ({ setLocation }) => {
       }
     );
   }, [setLocation]);
-  return null;
 };
 
 FetchLocation.propTypes = {

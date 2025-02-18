@@ -26,7 +26,7 @@ export const DistanceInput = ({ setDistance }) => {
           onChange={handleChange}
           placeholder="距離 (Km)"
         />
-        <button type="submit">設定</button>
+        <button type="submit">距離確定ボタン</button>
       </form>
     </div>
   );

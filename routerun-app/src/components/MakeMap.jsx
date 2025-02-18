@@ -2,19 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import { FetchLocation } from "./FetchLocation";
 
 export const MakeMap = ({ encodedPath }) => {
-  const [location, setlocation] = useState("null");
+  const [location, setlocation] = useState(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-
-  useEffect(() => {
-    console.log("-------------");
-    console.log("-------------");
-    console.log(encodedPath);
-    console.log("-------------");
-    console.log(location);
-    console.log("-------------");
-    console.log("-------------");
-  }, [encodedPath]);
 
   const initializeMap = () => {
     if (!mapRef.current || !window.google || !window.google.maps) {
@@ -43,30 +33,33 @@ export const MakeMap = ({ encodedPath }) => {
     polyline.setMap(map);
   };
 
-  const test = () => {
+  useEffect(() => {
+    if (!location) return;
     if (window.google && window.google.maps) {
       initializeMap();
       return;
     }
 
-    // Google Maps API スクリプトをロード
-    const script = document.createElement("script");
-    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
-    script.async = true;
-    script.defer = true;
-    document.body.appendChild(script);
+    if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
+      script.async = true;
+      script.defer = true;
+      document.body.appendChild(script);
 
-    window.initMap = initializeMap;
+      window.initMap = initializeMap;
+    } else {
+      initializeMap(); // すでにロードされている場合はマップを初期化
+    }
 
     return () => {
       delete window.initMap;
     };
-  };
+  }, [encodedPath, location]);
 
   return (
     <>
       <FetchLocation setLocation={setlocation} />
-      <p onClick={test}>aaaaaaaaa</p>
       <div ref={mapRef} style={{ width: "100%", height: "400px" }} />
     </>
   );
