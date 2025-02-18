@@ -54,7 +54,7 @@ export const Home = ({ location }) => {
 
   return (
     <>
-      <RoundTripMap origin={location} distance={"1000"} />
+      <RoundTripMap origin={location} distance={1000} />
     </>
   );
 };

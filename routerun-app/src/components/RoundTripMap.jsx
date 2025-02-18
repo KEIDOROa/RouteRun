@@ -1,5 +1,7 @@
-import { useEffect, useState } from "react";
+import { useState } from "react";
+import { v4 as uuidv4 } from "uuid";
 import PropTypes from "prop-types";
+import axios from "axios";
 
 export const RoundTripMap = ({ origin, distance }) => {
   const graphHopperKey = import.meta.env.VITE_GRAPHHOPPER_API_KEY;
@@ -12,7 +14,7 @@ export const RoundTripMap = ({ origin, distance }) => {
       profile: "foot",
       algorithm: "round_trip",
       "round_trip.distance": distance,
-      "round_trip.seed": roundTripSeed,
+      "round_trip.seed": uuidv4(),
       pass_through: true,
       "ch.disable": true,
       point: `${origin.lat},${origin.lng}`,
@@ -60,7 +62,7 @@ export const RoundTripMap = ({ origin, distance }) => {
     <div>
       <h2>ルートデータ</h2>
       <button onClick={makeroute}>再生成</button>
-      <p>{routeData}</p>
+      <p>{JSON.stringify(routeData)}</p>
     </div>
   );
 };
