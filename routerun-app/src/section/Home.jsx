@@ -1,8 +1,13 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useState, useRef, useCallback } from "react";
 import { RoundTripMap } from "../components/RoundTripMap";
+import { MakeMap } from "../components/MakeMap.jsx";
+import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
 
-export const Home = ({ location }) => {
+export const Home = () => {
+  const [distance, setDistance] = useState(null);
+  const [location, setlocation] = useState(null);
+  const [routeData, setRouteData] = useState(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
@@ -23,12 +28,13 @@ export const Home = ({ location }) => {
       position: location,
       map,
     });
-  }, [location, mapId]);
+
+    // エンコードされた経路をデコードする
+    const decodedPath =
+      window.google.maps.geometry.encoding.decodePath(mappath);
+  }, [location, mapId, setRouteData]);
 
   useEffect(() => {
-    //１，距離質問
-    //２．postしてルート作成
-    //３．確定ボタン押したらルート案内開始
     if (!location || !apiKey || !mapId) return;
 
     if (window.google && window.google.maps) {
@@ -54,14 +60,23 @@ export const Home = ({ location }) => {
 
   return (
     <>
-      <RoundTripMap origin={location} distance={1000} />
+      <h2>距離を設定してください</h2>
+      <DistanceInput setDistance={setDistance} />
+
+      {distance && (
+        <>
+          <RoundTripMap distance={distance} routeData={setRouteData} />
+          {routeData ? (
+            <MakeMap encodedPath={routeData.paths[0].points} />
+          ) : (
+            <p>ルートを取得中...</p>
+          )}
+        </>
+      )}
     </>
   );
 };
 
 Home.propTypes = {
-  location: PropTypes.shape({
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired,
-  }).isRequired,
+  onRouteDataReceived: PropTypes.func.isRequired,
 };

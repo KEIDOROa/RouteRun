@@ -1,34 +1,7 @@
-import { useEffect } from "react";
-import { Link } from "react-router";
+import { Link } from "react-router-dom";
 import PropTypes from "prop-types";
 
-export const Start = ({ setLocation }) => {
-  //位置情報初回のみ更新
-  const GetLocation = () => {
-    if (!navigator.geolocation) {
-      console.error("Geolocation はこのブラウザでサポートされていません。");
-      return;
-    }
-
-    navigator.geolocation.getCurrentPosition(
-      (position) => {
-        const lat = position.coords.latitude;
-        const lng = position.coords.longitude;
-        setLocation({ lat, lng });
-
-        console.log("lat : " + lat + "- lng : " + lng);
-      },
-      (error) => {
-        console.error("現在地の取得に失敗:", error);
-      }
-    );
-  };
-
-  //位置情報常時更新用program
-  useEffect(() => {
-    GetLocation;
-  }, [setLocation]);
-
+export const Start = () => {
   return (
     <>
       <p>testbutton</p>
