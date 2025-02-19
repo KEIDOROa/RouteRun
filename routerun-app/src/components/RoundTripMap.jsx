@@ -4,7 +4,7 @@ import PropTypes from "prop-types";
 import axios from "axios";
 import { FetchLocation } from "./FetchLocation";
 
-export const RoundTripMap = ({ distance, routeData }) => {
+export const RoundTripMap = ({ distance, seed, routeData }) => {
   const graphHopperKey = import.meta.env.VITE_GRAPHHOPPER_API_KEY;
   const [location, setlocation] = useState(null);
 
@@ -16,15 +16,14 @@ export const RoundTripMap = ({ distance, routeData }) => {
     const params = {
       profile: "foot",
       algorithm: "round_trip",
-      "round_trip.distance": distance,
-      "round_trip.seed": uuidv4(),
-      pass_through: true,
-      "ch.disable": true,
+      "round_trip.distance": distance * 1000,
+      "round_trip.seed": seed,
       point: `${location.lat},${location.lng}`,
       key: graphHopperKey,
     };
 
     try {
+      console.log(seed);
       const response = await axios.get(url, {
         params,
         headers: {
@@ -41,7 +40,7 @@ export const RoundTripMap = ({ distance, routeData }) => {
         return;
       }
 
-      routeData(response.data); // JSONデータを保存
+      routeData(response.data);
     } catch (error) {
       console.error("API通信エラー:", error);
     }
@@ -51,14 +50,13 @@ export const RoundTripMap = ({ distance, routeData }) => {
     if (distance && location) {
       makeroute();
     }
-  }, [distance, location]);
+  }, [distance, location, seed]);
 
   const makeroute = () => {
     if (!graphHopperKey) {
       console.warn("GraphHopper APIキーが設定されていません");
       return;
     }
-    console.log(location + ":" + distance);
     if (!location || !distance) return;
 
     fetchRoute();

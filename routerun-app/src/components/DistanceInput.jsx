@@ -12,7 +12,7 @@ export const DistanceInput = ({ setDistance }) => {
     e.preventDefault();
     const numValue = parseFloat(inputValue);
     if (!isNaN(numValue) && numValue > 0) {
-      setDistance(numValue * 1000);
+      setDistance(numValue);
     }
   };
 

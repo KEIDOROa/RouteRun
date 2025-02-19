@@ -3,60 +3,18 @@ import { RoundTripMap } from "../components/RoundTripMap";
 import { MakeMap } from "../components/MakeMap.jsx";
 import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
 export const Home = () => {
   const [distance, setDistance] = useState(null);
-  const [location, setlocation] = useState(null);
   const [routeData, setRouteData] = useState(null);
+  const [seed, setSeed] = useState(uuidv4());
   const mapRef = useRef(null);
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
 
-  const initializeMap = useCallback(() => {
-    if (!mapRef.current || !window.google || !window.google.maps) {
-      console.error("Google Maps API がまだロードされていません。");
-      return;
-    }
-
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: location,
-      zoom: 15,
-      mapId: mapId,
-    });
-
-    new window.google.maps.marker.AdvancedMarkerElement({
-      position: location,
-      map,
-    });
-
-    // エンコードされた経路をデコードする
-    const decodedPath =
-      window.google.maps.geometry.encoding.decodePath(mappath);
-  }, [location, mapId, setRouteData]);
-
-  useEffect(() => {
-    if (!location || !apiKey || !mapId) return;
-
-    if (window.google && window.google.maps) {
-      initializeMap();
-      return;
-    }
-
-    if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker&loading=async`;
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    }
-
-    window.initMap = initializeMap;
-
-    return () => {
-      delete window.initMap;
-    };
-  }, [location, apiKey, mapId, initializeMap]);
-  // <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
+  const handleRegenerate = () => {
+    setSeed(uuidv4());
+    setRouteData(null);
+  };
 
   return (
     <>
@@ -65,9 +23,19 @@ export const Home = () => {
 
       {distance && (
         <>
-          <RoundTripMap distance={distance} routeData={setRouteData} />
+          <RoundTripMap
+            distance={distance}
+            seed={seed}
+            routeData={setRouteData}
+          />
           {routeData ? (
-            <MakeMap encodedPath={routeData.paths[0].points} />
+            <>
+              <MakeMap encodedPath={routeData.paths[0].points} />
+
+              <button onClick={handleRegenerate}>再生成</button>
+              <hr />
+              <button>確定（案内開始）</button>
+            </>
           ) : (
             <p>ルートを取得中...</p>
           )}

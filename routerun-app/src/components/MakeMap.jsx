@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FetchLocation } from "./FetchLocation";
 
 export const MakeMap = ({ encodedPath }) => {
-  const [location, setlocation] = useState(null);
+  const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
@@ -17,20 +17,36 @@ export const MakeMap = ({ encodedPath }) => {
       zoom: 15,
     });
 
-    // エンコードされた経路をデコードする
     const decodedPath =
       window.google.maps.geometry.encoding.decodePath(encodedPath);
 
-    // 経路を描画
-    const polyline = new window.google.maps.Polyline({
-      path: decodedPath,
-      geodesic: true,
-      strokeColor: "#FF0000",
-      strokeOpacity: 1.0,
-      strokeWeight: 4,
-    });
+    const directionsService = new window.google.maps.DirectionsService();
+    const directionsRenderer = new window.google.maps.DirectionsRenderer();
+    directionsRenderer.setMap(map);
 
-    polyline.setMap(map);
+    const filteredWaypoints = decodedPath
+      .filter((_, index) => index % 5 === 0)
+      .slice(0, 25)
+      .map((point) => ({
+        location: `${point.lat()},${point.lng()}`,
+        stopover: false,
+      }));
+
+    directionsService.route(
+      {
+        origin: location,
+        destination: location,
+        waypoints: filteredWaypoints,
+        travelMode: "WALKING",
+      },
+      (result, status) => {
+        if (status === "OK") {
+          directionsRenderer.setDirections(result);
+        } else {
+          console.error("ルート取得に失敗:", status);
+        }
+      }
+    );
   };
 
   useEffect(() => {
@@ -49,7 +65,7 @@ export const MakeMap = ({ encodedPath }) => {
 
       window.initMap = initializeMap;
     } else {
-      initializeMap(); // すでにロードされている場合はマップを初期化
+      initializeMap();
     }
 
     return () => {
@@ -59,7 +75,7 @@ export const MakeMap = ({ encodedPath }) => {
 
   return (
     <>
-      <FetchLocation setLocation={setlocation} />
+      <FetchLocation setLocation={setLocation} />
       <div ref={mapRef} style={{ width: "100%", height: "400px" }} />
     </>
   );
