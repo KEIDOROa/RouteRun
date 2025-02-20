@@ -1,59 +1,89 @@
-import { useEffect, useRef, useCallback } from "react";
+import { useEffect, useState } from "react";
+import { RoundTripMap } from "../components/RoundTripMap";
+import { MakeMap } from "../components/MakeMap.jsx";
+import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
+import { v4 as uuidv4 } from "uuid";
 
-export const Home = ({ location }) => {
-  const mapRef = useRef(null);
-  const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
-  const mapId = import.meta.env.VITE_GOOGLE_MAPS_MAP_ID;
+export const Home = () => {
+  const [location, setLocation] = useState(null);
+  const [distance, setDistance] = useState(null);
+  const [routeData, setRouteData] = useState(null);
+  const [seed, setSeed] = useState(uuidv4());
+  const [isNavigating, setIsNavigating] = useState(false);
 
-  const initializeMap = useCallback(() => {
-    if (!mapRef.current || !window.google || !window.google.maps) {
-      console.error("Google Maps API がまだロードされていません。");
-      return;
-    }
+  const handleRegenerate = () => {
+    setSeed(uuidv4());
+    setRouteData(null);
+  };
 
-    const map = new window.google.maps.Map(mapRef.current, {
-      center: location,
-      zoom: 15,
-      mapId: mapId,
-    });
-
-    new window.google.maps.marker.AdvancedMarkerElement({
-      position: location,
-      map,
-    });
-  }, [location, mapId]);
+  const handleStartNavigation = () => {
+    console.log("案内を開始");
+    setIsNavigating(true);
+  };
 
   useEffect(() => {
-    if (!location || !apiKey || !mapId) return;
-
-    if (window.google && window.google.maps) {
-      initializeMap();
-      return;
-    }
-
-
-    if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&callback=initMap&libraries=marker&loading=async`;
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-    }
-
-    window.initMap = initializeMap;
-
-    return () => {
-      delete window.initMap;
+    const fetchLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setLocation({ lat, lng });
+        },
+        (error) => {
+          console.error("現在地の取得に失敗:", error);
+        }
+      );
     };
-  }, [location, apiKey, mapId, initializeMap]);
 
-  return <div ref={mapRef} style={{ width: "100%", height: "400px" }} />;
+    fetchLocation();
+  }, [seed]);
+
+  return (
+    <>
+      {!isNavigating ? (
+        <>
+          <h2>距離を設定してください</h2>
+          <DistanceInput setDistance={setDistance} />
+        </>
+      ) : (
+        <></>
+      )}
+
+      {distance && (
+        <>
+          <RoundTripMap
+            location={location}
+            distance={distance}
+            seed={seed}
+            routeData={setRouteData}
+          />
+          {routeData ? (
+            <>
+              <MakeMap
+                encodedPath={routeData.paths[0].points}
+                location={location}
+              />
+
+              {!isNavigating && (
+                <>
+                  <button onClick={handleStartNavigation}>
+                    確定（案内開始）
+                  </button>
+                  <hr />
+                  <button onClick={handleRegenerate}>再生成</button>
+                </>
+              )}
+            </>
+          ) : (
+            <p>ルートを取得中...</p>
+          )}
+        </>
+      )}
+    </>
+  );
 };
 
 Home.propTypes = {
-  location: PropTypes.shape({
-    lat: PropTypes.number.isRequired,
-    lng: PropTypes.number.isRequired,
-  }).isRequired,
+  onRouteDataReceived: PropTypes.func.isRequired,
 };
