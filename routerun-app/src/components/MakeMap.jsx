@@ -6,6 +6,7 @@ export const MakeMap = ({ encodedPath, location }) => {
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
+  const watcherId = useRef(null);
 
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
@@ -15,7 +16,7 @@ export const MakeMap = ({ encodedPath, location }) => {
 
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
       script.async = true;
       script.defer = true;
 
@@ -74,8 +75,12 @@ export const MakeMap = ({ encodedPath, location }) => {
       }
     );
 
+    if (watcherId.current) {
+      navigator.geolocation.clearWatch(watcherId.current);
+    }
+
     if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
+      watcherId.current = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude, heading } = position.coords;
 
@@ -116,15 +121,18 @@ export const MakeMap = ({ encodedPath, location }) => {
 
   useEffect(() => {
     if (isGoogleLoaded) {
+      window.initMap = initializeMap;
       initializeMap();
     }
+
+    return () => {
+      if (watcherId.current) {
+        navigator.geolocation.clearWatch(watcherId.current);
+      }
+    };
   }, [isGoogleLoaded, encodedPath, location]);
 
-  return (
-    <>
-      <div ref={mapRef} style={{ width: "60%", height: "60vh" }} />
-    </>
-  );
+  return <div ref={mapRef} style={{ width: "60%", height: "60vh" }} />;
 };
 
 MakeMap.propTypes = {
