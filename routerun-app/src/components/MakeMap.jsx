@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { FetchLocation } from "./FetchLocation";
 
-export const MakeMap = ({ encodedPath }) => {
+export const MakeMap = ({ encodedPath, setIsNavigating }) => {
   const currentLocationMarker = useRef(null);
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
@@ -117,7 +117,7 @@ export const MakeMap = ({ encodedPath }) => {
   return (
     <>
       <FetchLocation setLocation={setLocation} />
-      <div ref={mapRef} style={{ width: "100%", height: "400px" }} />
+      <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
     </>
   );
 };
