@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { FetchLocation } from "./FetchLocation";
 
 export const MakeMap = ({ encodedPath }) => {
+  const currentLocationMarker = useRef(null);
   const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
@@ -20,8 +21,12 @@ export const MakeMap = ({ encodedPath }) => {
     const decodedPath =
       window.google.maps.geometry.encoding.decodePath(encodedPath);
 
+    //道案内テキスト処理
+
     const directionsService = new window.google.maps.DirectionsService();
-    const directionsRenderer = new window.google.maps.DirectionsRenderer();
+    const directionsRenderer = new window.google.maps.DirectionsRenderer({
+      suppressMarkers: true,
+    });
     directionsRenderer.setMap(map);
 
     const filteredWaypoints = decodedPath
@@ -47,6 +52,42 @@ export const MakeMap = ({ encodedPath }) => {
         }
       }
     );
+
+    //現在地表示処理
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const { latitude, longitude, heading } = position.coords;
+
+          if (!currentLocationMarker.current) {
+            currentLocationMarker.current = new window.google.maps.Marker({
+              position: { lat: latitude, lng: longitude },
+              map,
+              icon: {
+                path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+                fillColor: "blue",
+                fillOpacity: 1,
+                strokeWeight: 2,
+                rotation: heading || 0,
+              },
+            });
+          } else {
+            currentLocationMarker.current.setPosition({
+              lat: latitude,
+              lng: longitude,
+            });
+            currentLocationMarker.current.setIcon({
+              ...currentLocationMarker.current.getIcon(),
+              rotation: heading || 0,
+            });
+          }
+        },
+        (error) => console.error("現在地の取得に失敗:", error),
+        { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
+      );
+    }
   };
 
   useEffect(() => {
