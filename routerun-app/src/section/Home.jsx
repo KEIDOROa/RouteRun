@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useEffect, useState } from "react";
 import { RoundTripMap } from "../components/RoundTripMap";
 import { MakeMap } from "../components/MakeMap.jsx";
 import { DistanceInput } from "../components/DistanceInput.jsx";
@@ -6,6 +6,7 @@ import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 
 export const Home = () => {
+  const [location, setLocation] = useState(null);
   const [distance, setDistance] = useState(null);
   const [routeData, setRouteData] = useState(null);
   const [seed, setSeed] = useState(uuidv4());
@@ -21,6 +22,23 @@ export const Home = () => {
     setIsNavigating(true);
   };
 
+  useEffect(() => {
+    const fetchLocation = () => {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const lat = position.coords.latitude;
+          const lng = position.coords.longitude;
+          setLocation({ lat, lng });
+        },
+        (error) => {
+          console.error("現在地の取得に失敗:", error);
+        }
+      );
+    };
+
+    fetchLocation();
+  }, [seed]);
+
   return (
     <>
       {!isNavigating ? (
@@ -35,6 +53,7 @@ export const Home = () => {
       {distance && (
         <>
           <RoundTripMap
+            location={location}
             distance={distance}
             seed={seed}
             routeData={setRouteData}
@@ -43,7 +62,7 @@ export const Home = () => {
             <>
               <MakeMap
                 encodedPath={routeData.paths[0].points}
-                setIsNavigating={isNavigating}
+                location={location}
               />
 
               {!isNavigating && (

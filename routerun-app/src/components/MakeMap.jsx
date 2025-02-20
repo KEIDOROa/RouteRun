@@ -1,15 +1,38 @@
 import { useEffect, useRef, useState } from "react";
-import { FetchLocation } from "./FetchLocation";
+import PropTypes from "prop-types";
 
-export const MakeMap = ({ encodedPath, setIsNavigating }) => {
+export const MakeMap = ({ encodedPath, location }) => {
   const currentLocationMarker = useRef(null);
-  const [location, setLocation] = useState(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+  const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
+
+  const loadGoogleMapsScript = () => {
+    if (window.google && window.google.maps) {
+      setIsGoogleLoaded(true);
+      return;
+    }
+
+    if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
+      const script = document.createElement("script");
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
+      script.async = true;
+      script.defer = true;
+
+      script.onload = () => {
+        setIsGoogleLoaded(true);
+      };
+
+      script.onerror = () =>
+        console.error("Google Maps APIの読み込みに失敗しました");
+
+      document.body.appendChild(script);
+    }
+  };
 
   const initializeMap = () => {
     if (!mapRef.current || !window.google || !window.google.maps) {
-      console.error("Google Maps API がまだロードされていません。");
+      console.error("Google Maps API がまだロードされていません");
       return;
     }
 
@@ -20,8 +43,6 @@ export const MakeMap = ({ encodedPath, setIsNavigating }) => {
 
     const decodedPath =
       window.google.maps.geometry.encoding.decodePath(encodedPath);
-
-    //道案内テキスト処理
 
     const directionsService = new window.google.maps.DirectionsService();
     const directionsRenderer = new window.google.maps.DirectionsRenderer({
@@ -52,8 +73,6 @@ export const MakeMap = ({ encodedPath, setIsNavigating }) => {
         }
       }
     );
-
-    //現在地表示処理
 
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
@@ -92,32 +111,23 @@ export const MakeMap = ({ encodedPath, setIsNavigating }) => {
 
   useEffect(() => {
     if (!location) return;
-    if (window.google && window.google.maps) {
-      initializeMap();
-      return;
-    }
+    loadGoogleMapsScript();
+  }, [apiKey]);
 
-    if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
-      const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
-      script.async = true;
-      script.defer = true;
-      document.body.appendChild(script);
-
-      window.initMap = initializeMap;
-    } else {
+  useEffect(() => {
+    if (isGoogleLoaded) {
       initializeMap();
     }
-
-    return () => {
-      delete window.initMap;
-    };
-  }, [encodedPath, location]);
+  }, [isGoogleLoaded, encodedPath, location]);
 
   return (
     <>
-      <FetchLocation setLocation={setLocation} />
-      <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
+      <div ref={mapRef} style={{ width: "60%", height: "60vh" }} />
     </>
   );
+};
+
+MakeMap.propTypes = {
+  encodedPath: PropTypes.string.isRequired,
+  location: PropTypes.object.isRequired,
 };
