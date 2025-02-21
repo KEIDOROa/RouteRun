@@ -1,6 +1,6 @@
 {
   "hosting": {
-    "public": "build",
+    "public": "routerun-app/dist",
     "ignore": [
       "firebase.json",
       "**/.*",
