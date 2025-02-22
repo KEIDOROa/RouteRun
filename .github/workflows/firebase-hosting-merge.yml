@@ -1,15 +1,19 @@
 name: Deploy to Firebase Hosting on merge
+
 on:
   push:
     branches:
       - dev
+
 jobs:
   build_and_deploy:
     runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
 
-      - name: Create .env file
+    steps:
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
+
+      - name: 🛠 Create .env file
         run: |
           echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> routerun-app/.env
           echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> routerun-app/.env
@@ -22,10 +26,17 @@ jobs:
           echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> routerun-app/.env
           echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> routerun-app/.env
 
-      - run: npm ci --prefix routerun-app
-      - run: npm run build --prefix routerun-app
+      - name: 🔍 Verify .env contents (masked)
+        run: cat routerun-app/.env
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: 📦 Install dependencies
+        run: npm ci --prefix routerun-app
+
+      - name: 🔨 Build project
+        run: npm run build --prefix routerun-app -- --mode production
+
+      - name: 🚀 Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ROUTERUN_F468E }}
