@@ -23,22 +23,22 @@ jobs:
 
       - name: Create .env file
         run: |
-          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_GRAPHHOPPER_API_KEY=${{ secrets.VITE_GRAPHHOPPER_API_KEY }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> ROUTERUN/routerun-app/.env
-          echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> ROUTERUN/routerun-app/.env
+          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> ./routerun-app/.env
+          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> ./routerun-app/.env
+          echo "VITE_GRAPHHOPPER_API_KEY=${{ secrets.VITE_GRAPHHOPPER_API_KEY }}" >> ./routerun-app/.env
+          echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> ./routerun-app/.env
+          echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> ./routerun-app/.env
+          echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> ./routerun-app/.env
+          echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> ./routerun-app/.env
+          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> ./routerun-app/.env
+          echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> ./routerun-app/.env
+          echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> ./routerun-app/.env
 
       - name: Confirm .env file existence
-        run: ls -la ROUTERUN/routerun-app/
+        run: ls -la ./routerun-app/
 
-      - run: cd ROUTERUN/routerun-app && npm ci
-      - run: cd ROUTERUN/routerun-app && npm run build
+      - run: cd ./routerun-app && npm ci
+      - run: cd ./routerun-app && npm run build
 
       - name: Deploy to Firebase Hosting (Preview Channel)
         run: firebase hosting:channel:deploy pr-${{ github.event.number }} --project routerun-f468e
