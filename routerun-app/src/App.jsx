@@ -1,16 +1,15 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { useState } from "react";
 import { Start } from "./section/Start";
 import { Home } from "./section/Home";
-import { Goal } from "./section/Goal";
 
 export default function App() {
+  const [location, setLocation] = useState(null);
+
   return (
-    <BrowserRouter>
-      <Routes>
-        <Route path="/" element={<Start />} />
-        <Route path="/home" element={<Home />} />
-        <Route path="/goal" element={<Goal />} />
-      </Routes>
-    </BrowserRouter>
+    <div>
+      <h1>Google Maps 現在地表示</h1>
+      <Start setLocation={setLocation} />
+      {location ? <Home location={location} /> : <p>現在地を取得中...</p>}
+    </div>
   );
 }
