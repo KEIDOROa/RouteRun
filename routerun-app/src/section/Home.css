@@ -71,6 +71,8 @@
   width: 40%;
   height: 100%;
   padding-left: 3%;
+  border: none;
+  outline: none;
 }
 
 .home-container .nav-container .text-container {
