@@ -41,6 +41,9 @@ export const Home = () => {
 
   return (
     <>
+      <p>test</p>
+      <p>{import.meta.env.VITE_GOOGLE_MAPS_API_KEY}</p>
+      <p>test</p>
       {!isNavigating ? (
         <>
           <h2>距離を設定してください</h2>
