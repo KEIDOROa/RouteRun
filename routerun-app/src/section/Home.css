@@ -1,11 +1,20 @@
+.home-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
 .home-container .nav-container {
+  position: absolute;
   width: 80%;
   height: 50px;
-  margin: 0 auto;
-  margin-top: 10%;
+  top: 5%;
+  left: 10%;
   border: solid 0.5px #d3d3d3;
   border-radius: 50px;
   display: flex;
+  z-index: 10;
 }
 
 .home-container .nav-container .menu-container {
@@ -21,7 +30,7 @@
   cursor: pointer;
   width: 30px;
   height: 30px;
-  z-index: 5;
+  z-index: 50;
 }
 
 .home-container .nav-container .menu-container .toggle-button span {
@@ -82,4 +91,13 @@
 .home-container .nav-container .icon-container {
   width: 15%;
   margin-right: 10%;
+}
+
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
 }
