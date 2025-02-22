@@ -1,6 +1,11 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import "./Start.css";
 
-export const Start = ({ setLocation }) => {
+export const Start = () => {
+  const navigate = useNavigate();
+  const [location, setLocation] = useState(null);
+
   useEffect(() => {
     if (!navigator.geolocation) {
       console.error("Geolocation はこのブラウザでサポートされていません。");
@@ -17,7 +22,21 @@ export const Start = ({ setLocation }) => {
         console.error("現在地の取得に失敗:", error);
       }
     );
-  }, [setLocation]);
+  }, []);
 
-  return <div className="text-red-500"></div>;
+  const handleStartClick = () => {
+    if (location) {
+      navigate("/home", { state: location });
+    } else {
+      console.error("現在地の取得が完了していません。");
+    }
+  };
+  return (
+    <div className="start-container">
+      <h1>RouteRun</h1>
+      <div className="button" onClick={handleStartClick}>
+        <div className="button-text">START</div>
+      </div>
+    </div>
+  );
 };

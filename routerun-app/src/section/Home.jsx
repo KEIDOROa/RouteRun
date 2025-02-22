@@ -1,14 +1,22 @@
 import { useEffect, useRef } from "react";
 import "./Home.css";
+import { useLocation, useNavigate } from "react-router-dom";
 
-export const Home = ({ location }) => {
+export const Home = () => {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { state } = location; // Start.jsx から受け取る location 情報
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 
   useEffect(() => {
-    if (!location || !apiKey) return;
+    if (!state || !apiKey) {
+      console.error("位置情報が取得できませんでした。");
+      navigate("/"); // 位置情報がない場合は Start 画面へ戻る
+      return;
+    }
 
-    // すでに Google Maps API が読み込まれているか確認
+    // Google Maps API の読み込み
     if (!window.google) {
       const script = document.createElement("script");
       script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}`;
@@ -23,16 +31,16 @@ export const Home = ({ location }) => {
       if (!mapRef.current) return;
 
       const map = new window.google.maps.Map(mapRef.current, {
-        center: location,
+        center: state,
         zoom: 15,
       });
 
       new window.google.maps.Marker({
-        position: location,
+        position: state,
         map,
       });
     }
-  }, [location, apiKey]);
+  }, [state, apiKey, navigate]);
 
   return (
     <div className="home-container">
