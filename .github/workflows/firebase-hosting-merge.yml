@@ -1,38 +1,15 @@
-name: Deploy to Firebase Hosting on PR
-on:
-  pull_request:
-    branches:
-      - dev
+- name: Create .env file
+  run: |
+    echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_GRAPHHOPPER_API_KEY=${{ secrets.VITE_GRAPHHOPPER_API_KEY }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> RouteRun/RouteRun-app/.env
+    echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> RouteRun/RouteRun-app/.env
 
-jobs:
-  build_and_deploy:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v4
-
-      - name: Authenticate with Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
-          credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
-
-      - name: Install Firebase CLI
-        run: npm install -g firebase-tools
-
-      - name: Create .env file
-        run: |
-          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_GRAPHHOPPER_API_KEY=${{ secrets.VITE_GRAPHHOPPER_API_KEY }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> RouteRun/RouteRun-app/.env
-          echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> RouteRun/RouteRun-app/.env
-
-      - run: cd RouteRun/RouteRun-app && npm ci
-      - run: cd RouteRun/RouteRun-app && npm run build
-
-      - name: Deploy to Firebase Hosting (Preview Channel)
-        run: firebase hosting:channel:deploy pr-${{ github.event.number }} --project routerun-f468e
+- name: Check .env file content
+  run: cat RouteRun/RouteRun-app/.env
