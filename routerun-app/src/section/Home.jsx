@@ -43,7 +43,9 @@ export const Home = () => {
     <>
       {!isNavigating ? (
         <>
-          <h2>距離を設定してください</h2>
+          <h2>
+            距離を設定してくださいtest{import.meta.env.VITE_GOOGLE_MAPS_API_KEY}
+          </h2>
           <DistanceInput setDistance={setDistance} />
         </>
       ) : (
