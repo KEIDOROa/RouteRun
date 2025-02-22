@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import "./Start.css";
 
-export const Start = () => {
+const Start = () => {
   const navigate = useNavigate();
   const [location, setLocation] = useState(null);
 
@@ -40,3 +40,5 @@ export const Start = () => {
     </div>
   );
 };
+
+export default Start;

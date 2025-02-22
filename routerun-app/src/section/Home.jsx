@@ -2,7 +2,7 @@ import { useEffect, useRef } from "react";
 import "./Home.css";
 import { useLocation, useNavigate } from "react-router-dom";
 
-export const Home = () => {
+const Home = () => {
   const location = useLocation();
   const navigate = useNavigate();
   const { state } = location; // Start.jsx から受け取る location 情報
@@ -65,3 +65,5 @@ export const Home = () => {
     </div>
   );
 };
+
+export default Home;
