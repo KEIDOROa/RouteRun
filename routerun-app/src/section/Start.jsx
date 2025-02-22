@@ -19,5 +19,5 @@ export const Start = ({ setLocation }) => {
     );
   }, [setLocation]);
 
-  return <div className="text-red-500">testmessage</div>;
+  return <div className="text-red-500"></div>;
 };
