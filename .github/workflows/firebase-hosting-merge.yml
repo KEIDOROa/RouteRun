@@ -1,6 +1,6 @@
-name: Deploy to Firebase Hosting on merge
+name: Deploy to Firebase Hosting on PR
 on:
-  push:
+  pull_request:
     branches:
       - dev
 
@@ -15,8 +15,8 @@ jobs:
         with:
           credentials_json: ${{ secrets.GOOGLE_APPLICATION_CREDENTIALS }}
 
-      - name: Set up Firebase CLI
-        run: curl -sL https://firebase.tools | bash
+      - name: Install Firebase CLI
+        run: npm install -g firebase-tools
 
       - name: Create .env file
         run: |
@@ -34,5 +34,5 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Deploy to Firebase Hosting
-        run: firebase hosting:deploy --project routerun-f468e
+      - name: Deploy to Firebase Hosting (Preview Channel)
+        run: firebase hosting:channel:deploy pr-${{ github.event.number }} --project routerun-f468e
