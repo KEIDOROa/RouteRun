@@ -12,15 +12,35 @@ jobs:
     if: ${{ github.event.pull_request.head.repo.full_name == github.repository }}
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
-      - run: npm ci
+      - name: 🛠 Create .env file
+        run: |
+          echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> routerun-app/.env
+          echo "VITE_GOOGLE_MAPS_MAP_ID=${{ secrets.VITE_GOOGLE_MAPS_MAP_ID }}" >> routerun-app/.env
+          echo "VITE_GRAPHHOPPER_API_KEY=${{ secrets.VITE_GRAPHHOPPER_API_KEY }}" >> routerun-app/.env
+          echo "VITE_API_KEY=${{ secrets.VITE_API_KEY }}" >> routerun-app/.env
+          echo "VITE_AUTH_DOMAIN=${{ secrets.VITE_AUTH_DOMAIN }}" >> routerun-app/.env
+          echo "VITE_PROJECT_ID=${{ secrets.VITE_PROJECT_ID }}" >> routerun-app/.env
+          echo "VITE_STORAGE_BUCKET=${{ secrets.VITE_STORAGE_BUCKET }}" >> routerun-app/.env
+          echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> routerun-app/.env
+          echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> routerun-app/.env
+          echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> routerun-app/.env
+
+      - name: 🔍 Verify .env contents (masked)
+        run: cat routerun-app/.env
+
+      - name: 📦 Install dependencies
+        run: npm ci
         working-directory: routerun-app
 
-      - run: npm run build
+      - name: 🔨 Build project
+        run: npm run build
         working-directory: routerun-app
 
-      - uses: FirebaseExtended/action-hosting-deploy@v0
+      - name: 🚀 Deploy to Firebase Hosting
+        uses: FirebaseExtended/action-hosting-deploy@v0
         with:
           repoToken: ${{ secrets.GITHUB_TOKEN }}
           firebaseServiceAccount: ${{ secrets.FIREBASE_SERVICE_ACCOUNT_ROUTERUN_F468E }}
