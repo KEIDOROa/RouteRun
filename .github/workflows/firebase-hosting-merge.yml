@@ -1,6 +1,6 @@
-name: Deploy to Firebase Hosting on PR
+name: Deploy to Firebase Hosting on Merge
 on:
-  pull_request:
+  push:
     branches:
       - dev
 
@@ -34,5 +34,5 @@ jobs:
       - run: npm ci
       - run: npm run build
 
-      - name: Deploy to Firebase Hosting (Preview Channel)
-        run: firebase hosting:channel:deploy pr-${{ github.event.number }} --project routerun-f468e
+      - name: Deploy to Firebase Hosting (Production)
+        run: firebase hosting:deploy --project routerun-f468e
