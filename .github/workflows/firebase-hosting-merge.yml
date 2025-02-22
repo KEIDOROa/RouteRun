@@ -18,6 +18,9 @@ jobs:
       - name: Install Firebase CLI
         run: npm install -g firebase-tools
 
+      - name: Check project directory structure
+        run: ls -R
+
       - name: Create .env file
         run: |
           echo "VITE_GOOGLE_MAPS_API_KEY=${{ secrets.VITE_GOOGLE_MAPS_API_KEY }}" >> ROUTERUN/routerun-app/.env
@@ -30,6 +33,9 @@ jobs:
           echo "VITE_MESSAGING_SENDER_ID=${{ secrets.VITE_MESSAGING_SENDER_ID }}" >> ROUTERUN/routerun-app/.env
           echo "VITE_APP_ID=${{ secrets.VITE_APP_ID }}" >> ROUTERUN/routerun-app/.env
           echo "VITE_MEASUREMENT_ID=${{ secrets.VITE_MEASUREMENT_ID }}" >> ROUTERUN/routerun-app/.env
+
+      - name: Confirm .env file existence
+        run: ls -la ROUTERUN/routerun-app/
 
       - run: cd ROUTERUN/routerun-app && npm ci
       - run: cd ROUTERUN/routerun-app && npm run build
