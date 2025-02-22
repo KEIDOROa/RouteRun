@@ -1,18 +1,23 @@
-import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
+import { useEffect } from "react";
 
-export const Start = () => {
-  return (
-    <>
-      <Link to="home">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          表示
-        </button>
-      </Link>
-    </>
-  );
-};
+export const Start = ({ setLocation }) => {
+  useEffect(() => {
+    if (!navigator.geolocation) {
+      console.error("Geolocation はこのブラウザでサポートされていません。");
+      return;
+    }
 
-Start.propTypes = {
-  setLocation: PropTypes.func.isRequired,
+    navigator.geolocation.getCurrentPosition(
+      (position) => {
+        const lat = position.coords.latitude;
+        const lng = position.coords.longitude;
+        setLocation({ lat, lng });
+      },
+      (error) => {
+        console.error("現在地の取得に失敗:", error);
+      }
+    );
+  }, [setLocation]);
+
+  return <div className="text-red-500">testmessage</div>;
 };
