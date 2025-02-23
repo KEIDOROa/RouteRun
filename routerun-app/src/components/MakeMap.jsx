@@ -7,13 +7,11 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const [midpointMaker, setmidpointMaker] = useState(false);
-  const [midflg, setmidflg] = useState(false);
+  let midflg = false;
   const watcherId = useRef(null);
   const pastPath = useRef([]);
   const pastPolyline = useRef(null);
   const mapInstance = useRef(null);
-  const [test, settest] = useState("");
-  const [test2, settest2] = useState("");
 
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
@@ -104,12 +102,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               midPoint
             );
 
-          console.log("Distance to MidPoint:", NearMidPoint);
-          settest(NearMidPoint);
-
-          if (NearMidPoint < 500 && !midflg) {
-            setmidflg(true);
-            alert("中間地点");
+          if (!midflg && NearMidPoint < 30) {
+            midflg = true;
           }
 
           // 現在地がGOALに近づいた場合
@@ -119,12 +113,9 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               location
             );
 
-          if (NearGoalPoint < 500 && midflg) {
+          if (midflg && NearGoalPoint < 30) {
             setgoal(true);
-            alert("Goalpoint");
           }
-
-          settest2(NearGoalPoint);
 
           if (!currentLocationMarker.current) {
             currentLocationMarker.current = new window.google.maps.Marker({
@@ -239,8 +230,6 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
 
   return (
     <>
-      <p>中間地点 : {test}</p>
-      <p>GOAL : {test2}</p>
       <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
     </>
   );
