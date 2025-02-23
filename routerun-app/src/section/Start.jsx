@@ -1,4 +1,4 @@
-import "../style/Start.css";
+import "../style/start.css";
 import { Link } from "react-router-dom";
 
 export const Start = () => {
