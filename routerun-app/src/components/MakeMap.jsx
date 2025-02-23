@@ -129,14 +129,6 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
                 rotation: heading || 0,
               },
               map,
-              icon: {
-                path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
-                scale: 5,
-                fillColor: "blue",
-                fillOpacity: 1,
-                strokeWeight: 2,
-                rotation: heading || 0,
-              },
             });
           } else {
             currentLocationMarker.current.setPosition({
