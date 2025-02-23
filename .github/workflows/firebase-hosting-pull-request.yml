@@ -15,7 +15,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v4
+      - name: 📥 Checkout repository
+        uses: actions/checkout@v4
 
       - name: Clear npm cache
         run: npm cache clean --force
@@ -36,7 +37,8 @@ jobs:
       - run: npm ci
         working-directory: routerun-app
 
-      - run: npm run build
+      - name: 🔨 Build project
+        run: npm run build
         working-directory: routerun-app
 
       - name: Deploy to Firebase Hosting (dev)
