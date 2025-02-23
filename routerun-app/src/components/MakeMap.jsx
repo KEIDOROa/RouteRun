@@ -7,6 +7,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const [midpointMaker, setmidpointMaker] = useState(false);
+  const [midflg, setmidflg] = useState(false);
   const watcherId = useRef(null);
 
   const loadGoogleMapsScript = () => {
@@ -98,8 +99,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
             );
 
           // 30メートル以内に到達した場合、中間地点到達フラグを立てる
-          if (origin < 30 && NearMidPoint) {
-            setgoal(true);
+          if (NearMidPoint < 30 && !midflg) {
+            setmidflg(true);
             alert("GOALしました");
           }
 
@@ -109,6 +110,10 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               new window.google.maps.LatLng(latitude, longitude),
               midPoint
             );
+
+          if (NearGoalPoint < 30 && midflg) {
+            setgoal(true);
+          }
 
           if (!currentLocationMarker.current) {
             currentLocationMarker.current = new window.google.maps.Marker({
@@ -204,4 +209,5 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
 MakeMap.propTypes = {
   encodedPath: PropTypes.string.isRequired,
   location: PropTypes.object.isRequired,
+  setgoal: PropTypes.func.isRequired,
 };
