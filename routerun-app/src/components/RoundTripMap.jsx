@@ -50,7 +50,6 @@ export const RoundTripMap = ({ distance, seed, routeData, location }) => {
   }, [distance, location, seed]);
 
   const makeroute = () => {
-    console.log("APIキー:", graphHopperKey);
     if (!graphHopperKey) {
       console.warn("GraphHopper APIキーが設定されていません");
       return;
