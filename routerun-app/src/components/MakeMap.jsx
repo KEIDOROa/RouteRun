@@ -90,31 +90,6 @@ export const MakeMap = ({ encodedPath, location }) => {
     if (navigator.geolocation) {
       watcherId.current = navigator.geolocation.watchPosition(
         (position) => {
-          const { latitude, longitude, heading } = position.coords;
-
-          // 現在地が中間地点に近づいた場合
-          const NearMidPoint =
-            window.google.maps.geometry.spherical.computeDistanceBetween(
-              new window.google.maps.LatLng(latitude, longitude),
-              midPoint
-            );
-
-          // 30メートル以内に到達した場合、中間地点到達フラグを立てる
-          if (NearMidPoint < 30 && !midflg) {
-            setmidflg(true);
-            alert("中間地点");
-          }
-
-          // 現在地がGOALに近づいた場合
-          const NearGoalPoint =
-            window.google.maps.geometry.spherical.computeDistanceBetween(
-              new window.google.maps.LatLng(latitude, longitude),
-              location
-            );
-
-          if (NearGoalPoint < 30 && midflg) {
-            setgoal(true);
-          }
           const { latitude, longitude } = position.coords;
           const currentPos = { lat: latitude, lng: longitude };
 
