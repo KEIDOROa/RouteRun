@@ -101,14 +101,14 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
           // 30メートル以内に到達した場合、中間地点到達フラグを立てる
           if (NearMidPoint < 30 && !midflg) {
             setmidflg(true);
-            alert("GOALしました");
+            alert("中間地点");
           }
 
           // 現在地がGOALに近づいた場合
           const NearGoalPoint =
             window.google.maps.geometry.spherical.computeDistanceBetween(
               new window.google.maps.LatLng(latitude, longitude),
-              midPoint
+              location
             );
 
           if (NearGoalPoint < 30 && midflg) {
@@ -203,7 +203,11 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
     };
   }, [isGoogleLoaded, encodedPath, location]);
 
-  return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
+  return (
+    <>
+      <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
+    </>
+  );
 };
 
 MakeMap.propTypes = {
