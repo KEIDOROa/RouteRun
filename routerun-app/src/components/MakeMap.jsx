@@ -203,7 +203,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
     };
   }, [isGoogleLoaded, encodedPath, location]);
 
-  return <div ref={mapRef} style={{ width: "60%", height: "60vh" }} />;
+  return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
 };
 
 MakeMap.propTypes = {

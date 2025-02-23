@@ -1,3 +1,16 @@
+import { useNavigate } from "react-router-dom";
+import "../style/Goal.css";
+
 export const Goal = () => {
-  return <>goal</>;
+  const navigate = useNavigate();
+
+  return (
+    <div className="goal-container">
+      <h1>CONGRATULATIONS!</h1>
+      <div className="message">おつかれさまでした！</div>
+      <div className="button" onClick={() => navigate("/")}>
+        Back
+      </div>
+    </div>
+  );
 };

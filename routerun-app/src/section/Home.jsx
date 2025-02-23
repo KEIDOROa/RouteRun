@@ -5,6 +5,7 @@ import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import "../style/home.css";
 
 export const Home = () => {
   const [location, setLocation] = useState(null);
@@ -52,7 +53,6 @@ export const Home = () => {
     <>
       {!isNavigating ? (
         <>
-          <h2>距離を設定してください</h2>
           <DistanceInput setDistance={setDistance} />
         </>
       ) : (
@@ -68,23 +68,29 @@ export const Home = () => {
             routeData={setRouteData}
           />
           {routeData ? (
-            <>
+            <div className="relative">
               <MakeMap
                 encodedPath={routeData.paths[0].points}
                 location={location}
                 setgoal={setgoal}
               />
-
               {!isNavigating && (
-                <>
-                  <button onClick={handleStartNavigation}>
-                    確定（案内開始）
+                <div className="absolute top-[10%] left-1/2 transform -translate-x-1/2 flex space-x-4">
+                  <button
+                    className="h-10 rounded-full bg-white px-8 text-black"
+                    onClick={handleStartNavigation}
+                  >
+                    ✓
                   </button>
-                  <hr />
-                  <button onClick={handleRegenerate}>再生成</button>
-                </>
+                  <button
+                    className="h-10 rounded-full bg-white px-8 text-black"
+                    onClick={handleRegenerate}
+                  >
+                    ↺
+                  </button>
+                </div>
               )}
-            </>
+            </div>
           ) : (
             <p>ルートを取得中...</p>
           )}
