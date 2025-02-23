@@ -2,7 +2,8 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 export const DistanceInput = ({ setDistance }) => {
-  const [inputValue, setInputValue] = useState(0);
+  const [inputValue, setInputValue] = useState();
+  const [button, setbutton] = useState(0);
 
   const handleChange = (e) => {
     setInputValue(e.target.value);
@@ -13,26 +14,40 @@ export const DistanceInput = ({ setDistance }) => {
     const numValue = parseFloat(inputValue);
     if (!isNaN(numValue) && numValue > 0) {
       setDistance(numValue);
+      setbutton(true);
     }
   };
 
   return (
-    <div>
-      <h3>距離を入力 (Km)</h3>
-      <form onSubmit={handleSubmit}>
-        <input
-          type="number"
-          value={inputValue}
-          onChange={handleChange}
-          placeholder="距離 (Km)"
-          step="0.1"
-        />
-        <button type="submit">距離確定ボタン</button>
-      </form>
-    </div>
+    <>
+      {!button ? (
+        <form className="home-container" onSubmit={handleSubmit}>
+          <div className="nav-container">
+            <div className="menu-container">
+              <div className="toggle-button">
+                <span></span>
+                <span></span>
+                <span></span>
+              </div>
+            </div>
+
+            <input
+              type="number"
+              value={inputValue}
+              onChange={handleChange}
+              step="0.1"
+              placeholder="input distance"
+            />
+          </div>
+        </form>
+      ) : (
+        <></>
+      )}
+    </>
   );
 };
 
 DistanceInput.propTypes = {
   setDistance: PropTypes.func.isRequired,
+  className: PropTypes.func.isRequired,
 };

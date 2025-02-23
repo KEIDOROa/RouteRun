@@ -267,7 +267,7 @@ export const MakeMap = ({ encodedPath, location }) => {
 
   return (
     <div style={{ position: "relative" }}>
-      <div ref={mapRef} style={{ width: "60%", height: "60vh" }} />
+      <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
       <button
         onClick={handleGetCurrentPosition}
         style={{
@@ -287,7 +287,9 @@ export const MakeMap = ({ encodedPath, location }) => {
       </button>
     </div>
   );
-};
+
+
+ };
 
 MakeMap.propTypes = {
   encodedPath: PropTypes.string.isRequired,

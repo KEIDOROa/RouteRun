@@ -1,0 +1,28 @@
+.start-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f5f8fa;
+}
+
+.start-container h1 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 30%;
+}
+
+.button {
+  width: 120%;
+  height: 40px;
+  background-color: #1da1f2;
+  color: #fff;
+  border-radius: 50px;
+  font-size: 1.5rem;
+  letter-spacing: 3px;
+  box-shadow: 5px 5px 10px #777777;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
