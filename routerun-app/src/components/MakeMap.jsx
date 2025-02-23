@@ -12,6 +12,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const pastPath = useRef([]);
   const pastPolyline = useRef(null);
   const mapInstance = useRef(null);
+  const [test, settest] = useState("");
+  const [test2, settest2] = useState("");
 
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
@@ -93,15 +95,19 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
       watcherId.current = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude, heading } = position.coords;
+          const currentPos = new window.google.maps.LatLng(latitude, longitude);
 
           // 現在地が中間地点に近づいた場合
           const NearMidPoint =
             window.google.maps.geometry.spherical.computeDistanceBetween(
-              new window.google.maps.LatLng(latitude, longitude),
+              currentPos,
               midPoint
             );
 
-          if (NearMidPoint < 30 && !midflg) {
+          console.log("Distance to MidPoint:", NearMidPoint);
+          settest(NearMidPoint);
+
+          if (NearMidPoint < 500 && !midflg) {
             setmidflg(true);
             alert("中間地点");
           }
@@ -109,13 +115,16 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
           // 現在地がGOALに近づいた場合
           const NearGoalPoint =
             window.google.maps.geometry.spherical.computeDistanceBetween(
-              new window.google.maps.LatLng(latitude, longitude),
+              currentPos,
               location
             );
 
-          if (NearGoalPoint < 30 && midflg) {
+          if (NearGoalPoint < 500 && midflg) {
             setgoal(true);
+            alert("Goalpoint");
           }
+
+          settest2(NearGoalPoint);
 
           if (!currentLocationMarker.current) {
             currentLocationMarker.current = new window.google.maps.Marker({
@@ -140,6 +149,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               rotation: heading || 0,
             });
           }
+
           updatePolyline(latitude, longitude);
         },
         (error) => console.error("現在地の取得に失敗:", error),
@@ -212,6 +222,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
     loadGoogleMapsScript();
   }, [apiKey]);
 
+  //位置情報が更新されたときに
+
   useEffect(() => {
     if (isGoogleLoaded) {
       window.initMap = initializeMap;
@@ -225,7 +237,13 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
     };
   }, [isGoogleLoaded, encodedPath, location]);
 
-  return <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />;
+  return (
+    <>
+      <p>中間地点 : {test}</p>
+      <p>GOAL : {test2}</p>
+      <div ref={mapRef} style={{ width: "100%", height: "100vh" }} />
+    </>
+  );
 };
 
 MakeMap.propTypes = {
