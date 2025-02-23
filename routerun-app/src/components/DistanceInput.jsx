@@ -2,7 +2,7 @@ import { useState } from "react";
 import PropTypes from "prop-types";
 
 export const DistanceInput = ({ setDistance }) => {
-  const [inputValue, setInputValue] = useState();
+  const [inputValue, setInputValue] = useState("");
   const [button, setbutton] = useState(0);
 
   const handleChange = (e) => {

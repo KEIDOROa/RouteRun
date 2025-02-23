@@ -9,6 +9,9 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const [midpointMaker, setmidpointMaker] = useState(false);
   const [midflg, setmidflg] = useState(false);
   const watcherId = useRef(null);
+  const pastPath = useRef([]);
+  const pastPolyline = useRef(null);
+  const mapInstance = useRef(null);
 
   const loadGoogleMapsScript = () => {
     if (window.google && window.google.maps) {
@@ -18,7 +21,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
 
     if (!document.querySelector(`script[src*="maps.googleapis.com"]`)) {
       const script = document.createElement("script");
-      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry&callback=initMap`;
+      script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=geometry`;
       script.async = true;
       script.defer = true;
 
@@ -43,6 +46,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
       center: location,
       zoom: 15,
     });
+    mapInstance.current = map;
 
     const decodedPath =
       window.google.maps.geometry.encoding.decodePath(encodedPath);
@@ -77,9 +81,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
       }
     );
 
-    //中間地点取得
+    // 中間地点取得
     const midPoint = midpoint(decodedPath);
-
     addMidPointMarker(map, midPoint);
 
     if (watcherId.current) {
@@ -98,17 +101,16 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               midPoint
             );
 
-          // 30メートル以内に到達した場合、中間地点到達フラグを立てる
           if (NearMidPoint < 30 && !midflg) {
             setmidflg(true);
-            alert("GOALしました");
+            alert("中間地点");
           }
 
           // 現在地がGOALに近づいた場合
           const NearGoalPoint =
             window.google.maps.geometry.spherical.computeDistanceBetween(
               new window.google.maps.LatLng(latitude, longitude),
-              midPoint
+              location
             );
 
           if (NearGoalPoint < 30 && midflg) {
@@ -118,6 +120,14 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
           if (!currentLocationMarker.current) {
             currentLocationMarker.current = new window.google.maps.Marker({
               position: { lat: latitude, lng: longitude },
+              icon: {
+                path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
+                scale: 5,
+                fillColor: "blue",
+                fillOpacity: 1,
+                strokeWeight: 2,
+                rotation: heading || 0,
+              },
               map,
               icon: {
                 path: window.google.maps.SymbolPath.FORWARD_CLOSED_ARROW,
@@ -138,6 +148,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               rotation: heading || 0,
             });
           }
+          updatePolyline(latitude, longitude);
         },
         (error) => console.error("現在地の取得に失敗:", error),
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
@@ -183,6 +194,25 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
     });
 
     setmidpointMaker(marker);
+  };
+
+  //ポリライン更新
+  const updatePolyline = (lat, lng) => {
+    pastPath.current.push({ lat, lng });
+
+    if (pastPolyline.current) {
+      pastPolyline.current.setMap(null);
+    }
+
+    pastPolyline.current = new window.google.maps.Polyline({
+      path: pastPath.current,
+      geodesic: true,
+      strokeColor: "red",
+      strokeOpacity: 1.0,
+      strokeWeight: 4,
+    });
+
+    pastPolyline.current.setMap(mapInstance.current);
   };
 
   useEffect(() => {
