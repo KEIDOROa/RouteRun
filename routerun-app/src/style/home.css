@@ -1,0 +1,106 @@
+.home-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.home-container .nav-container {
+  background-color: white;
+  position: absolute;
+  width: 80%;
+  height: 50px;
+  top: 8%;
+  left: 10%;
+  border: solid 0.5px #d3d3d3;
+  border-radius: 50px;
+  display: flex;
+  z-index: 10;
+}
+
+.home-container .nav-container .menu-container {
+  width: 15%;
+  margin-left: 5%;
+  padding-top: 10px;
+  padding-left: 12px;
+}
+
+.home-container .nav-container .menu-container .toggle-button {
+  display: block;
+  position: fixed;
+  cursor: pointer;
+  width: 30px;
+  height: 30px;
+  z-index: 50;
+}
+
+.home-container .nav-container .menu-container .toggle-button span {
+  position: absolute;
+  display: block;
+  background-color: #7e7e7e;
+  width: 20px;
+  height: 2px;
+  border-radius: 4px;
+}
+
+.home-container
+  .nav-container
+  .menu-container
+  .toggle-button
+  span:nth-child(1) {
+  top: 6px;
+}
+
+.home-container
+  .nav-container
+  .menu-container
+  .toggle-button
+  span:nth-child(2) {
+  top: 14px;
+}
+
+.home-container
+  .nav-container
+  .menu-container
+  .toggle-button
+  span:nth-child(3) {
+  bottom: 6px;
+}
+
+.home-container .nav-container input {
+  width: 40%;
+  height: 100%;
+  padding-left: 3%;
+  border: none;
+  outline: none;
+}
+
+.home-container .nav-container .text-container {
+  width: 10%;
+  height: 100%;
+  display: flex;
+  align-items: flex-end;
+}
+
+.home-container .nav-container .text-container p {
+  margin: 0 auto;
+  margin-bottom: 15%;
+}
+
+.home-container .nav-container .empty-box {
+  width: 10%;
+}
+
+.home-container .nav-container .icon-container {
+  width: 15%;
+  margin-right: 10%;
+}
+
+.map-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}

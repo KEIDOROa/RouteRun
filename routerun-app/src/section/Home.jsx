@@ -5,6 +5,7 @@ import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
 import { useNavigate } from "react-router-dom";
+import "../style/home.css";
 
 export const Home = () => {
   const [location, setLocation] = useState(null);
