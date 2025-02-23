@@ -4,6 +4,7 @@ import { MakeMap } from "../components/MakeMap.jsx";
 import { DistanceInput } from "../components/DistanceInput.jsx";
 import PropTypes from "prop-types";
 import { v4 as uuidv4 } from "uuid";
+import { useNavigate } from "react-router-dom";
 
 export const Home = () => {
   const [location, setLocation] = useState(null);
@@ -11,6 +12,8 @@ export const Home = () => {
   const [routeData, setRouteData] = useState(null);
   const [seed, setSeed] = useState(uuidv4());
   const [isNavigating, setIsNavigating] = useState(false);
+  const [goal, setgoal] = useState(false);
+  const navigate = useNavigate();
 
   const handleRegenerate = () => {
     setSeed(uuidv4());
@@ -21,6 +24,12 @@ export const Home = () => {
     console.log("案内を開始");
     setIsNavigating(true);
   };
+
+  useEffect(() => {
+    if (goal) {
+      navigate("/goal");
+    }
+  }, [goal, navigate]);
 
   useEffect(() => {
     const fetchLocation = () => {
@@ -63,6 +72,7 @@ export const Home = () => {
               <MakeMap
                 encodedPath={routeData.paths[0].points}
                 location={location}
+                setgoal={setgoal}
               />
 
               {!isNavigating && (

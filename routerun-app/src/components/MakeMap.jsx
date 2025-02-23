@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import PropTypes from "prop-types";
 
-export const MakeMap = ({ encodedPath, location }) => {
+export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const currentLocationMarker = useRef(null);
   const mapRef = useRef(null);
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
+  const [midpointMaker, setmidpointMaker] = useState(false);
+  const [midflg, setmidflg] = useState(false);
   const watcherId = useRef(null);
 
   const loadGoogleMapsScript = () => {
@@ -75,6 +77,11 @@ export const MakeMap = ({ encodedPath, location }) => {
       }
     );
 
+    //中間地点取得
+    const midPoint = midpoint(decodedPath);
+
+    addMidPointMarker(map, midPoint);
+
     if (watcherId.current) {
       navigator.geolocation.clearWatch(watcherId.current);
     }
@@ -83,6 +90,30 @@ export const MakeMap = ({ encodedPath, location }) => {
       watcherId.current = navigator.geolocation.watchPosition(
         (position) => {
           const { latitude, longitude, heading } = position.coords;
+
+          // 現在地が中間地点に近づいた場合
+          const NearMidPoint =
+            window.google.maps.geometry.spherical.computeDistanceBetween(
+              new window.google.maps.LatLng(latitude, longitude),
+              midPoint
+            );
+
+          // 30メートル以内に到達した場合、中間地点到達フラグを立てる
+          if (NearMidPoint < 30 && !midflg) {
+            setmidflg(true);
+            alert("GOALしました");
+          }
+
+          // 現在地がGOALに近づいた場合
+          const NearGoalPoint =
+            window.google.maps.geometry.spherical.computeDistanceBetween(
+              new window.google.maps.LatLng(latitude, longitude),
+              midPoint
+            );
+
+          if (NearGoalPoint < 30 && midflg) {
+            setgoal(true);
+          }
 
           if (!currentLocationMarker.current) {
             currentLocationMarker.current = new window.google.maps.Marker({
@@ -114,6 +145,46 @@ export const MakeMap = ({ encodedPath, location }) => {
     }
   };
 
+  const midpoint = (decodedPath) => {
+    let maxDistance = 0;
+    let farthestPoint = null;
+
+    decodedPath.forEach((point) => {
+      const distance =
+        window.google.maps.geometry.spherical.computeDistanceBetween(
+          new window.google.maps.LatLng(location),
+          new window.google.maps.LatLng(point)
+        );
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        farthestPoint = point;
+      }
+    });
+
+    return farthestPoint;
+  };
+
+  const addMidPointMarker = (map, midPoint) => {
+    if (midpointMaker) {
+      midpointMaker.setMap(null);
+    }
+
+    const marker = new window.google.maps.Marker({
+      position: midPoint,
+      map: map,
+      title: "中間地点",
+      icon: {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 6,
+        fillColor: "orange",
+        fillOpacity: 1,
+        strokeWeight: 2,
+      },
+    });
+
+    setmidpointMaker(marker);
+  };
+
   useEffect(() => {
     if (!location) return;
     loadGoogleMapsScript();
@@ -138,4 +209,5 @@ export const MakeMap = ({ encodedPath, location }) => {
 MakeMap.propTypes = {
   encodedPath: PropTypes.string.isRequired,
   location: PropTypes.object.isRequired,
+  setgoal: PropTypes.func.isRequired,
 };
