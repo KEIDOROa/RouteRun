@@ -1,19 +1,17 @@
+import "../style/Start.css";
 import { Link } from "react-router-dom";
-import PropTypes from "prop-types";
-import "../style/start.css";
 
 export const Start = () => {
   return (
     <>
-      <Link to="home">
-        <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
-          表示
-        </button>
-      </Link>
+      <div className="start-container">
+        <h1>RouteRun</h1>
+        <Link to="home">
+          <div className="button">
+            <p className="button-text">START</p>
+          </div>
+        </Link>
+      </div>
     </>
   );
-};
-
-Start.propTypes = {
-  setLocation: PropTypes.func.isRequired,
 };
