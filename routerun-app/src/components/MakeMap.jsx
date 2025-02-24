@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 
 export const MakeMap = ({ encodedPath, location, setgoal }) => {
@@ -7,13 +7,13 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   const apiKey = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
   const [isGoogleLoaded, setIsGoogleLoaded] = useState(false);
   const [midpointMaker, setmidpointMaker] = useState(false);
-  let midflg = false;
+  const midflg = false;
   const watcherId = useRef(null);
   const pastPath = useRef([]);
   const pastPolyline = useRef(null);
   const mapInstance = useRef(null);
 
-  const loadGoogleMapsScript = () => {
+  const loadGoogleMapsScript = useCallback(() => {
     if (window.google && window.google.maps) {
       setIsGoogleLoaded(true);
       return;
@@ -34,9 +34,49 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
 
       document.body.appendChild(script);
     }
-  };
+  }, [apiKey]);
 
-  const initializeMap = () => {
+  const midpoint = useCallback((decodedPath) => {
+    let maxDistance = 0;
+    let farthestPoint = null;
+
+    decodedPath.forEach((point) => {
+      const distance =
+        window.google.maps.geometry.spherical.computeDistanceBetween(
+          new window.google.maps.LatLng(location),
+          new window.google.maps.LatLng(point)
+        );
+      if (distance > maxDistance) {
+        maxDistance = distance;
+        farthestPoint = point;
+      }
+    });
+
+    return farthestPoint;
+  }, [location]);
+
+  const addMidPointMarker = useCallback((map, midPoint) => {
+    if (midpointMaker) {
+      midpointMaker.setMap(null);
+    }
+
+    const marker = new window.google.maps.Marker({
+      position: midPoint,
+      map: map,
+      title: "中間地点",
+      icon: {
+        path: window.google.maps.SymbolPath.CIRCLE,
+        scale: 6,
+        fillColor: "orange",
+        fillOpacity: 1,
+        strokeWeight: 2,
+      },
+    });
+
+    setmidpointMaker(marker);
+  }, [midpointMaker]);
+
+  const initializeMap = useCallback(() => {
     if (!mapRef.current || !window.google || !window.google.maps) {
       console.error("Google Maps API がまだロードされていません");
       return;
@@ -102,8 +142,8 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
               midPoint
             );
 
-          if (!midflg && NearMidPoint < 30) {
-            midflg = true;
+          if (!midflg.current && NearMidPoint < 30) {
+            midflg.current = true; // .current を使って更新
           }
 
           // 現在地がGOALに近づいた場合
@@ -147,47 +187,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
         { enableHighAccuracy: true, maximumAge: 0, timeout: 5000 }
       );
     }
-  };
-
-  const midpoint = (decodedPath) => {
-    let maxDistance = 0;
-    let farthestPoint = null;
-
-    decodedPath.forEach((point) => {
-      const distance =
-        window.google.maps.geometry.spherical.computeDistanceBetween(
-          new window.google.maps.LatLng(location),
-          new window.google.maps.LatLng(point)
-        );
-      if (distance > maxDistance) {
-        maxDistance = distance;
-        farthestPoint = point;
-      }
-    });
-
-    return farthestPoint;
-  };
-
-  const addMidPointMarker = (map, midPoint) => {
-    if (midpointMaker) {
-      midpointMaker.setMap(null);
-    }
-
-    const marker = new window.google.maps.Marker({
-      position: midPoint,
-      map: map,
-      title: "中間地点",
-      icon: {
-        path: window.google.maps.SymbolPath.CIRCLE,
-        scale: 6,
-        fillColor: "orange",
-        fillOpacity: 1,
-        strokeWeight: 2,
-      },
-    });
-
-    setmidpointMaker(marker);
-  };
+  }, [location, encodedPath, setgoal, addMidPointMarker, midflg, midpoint]);
 
   //ポリライン更新
   const updatePolyline = (lat, lng) => {
@@ -211,9 +211,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
   useEffect(() => {
     if (!location) return;
     loadGoogleMapsScript();
-  }, [apiKey]);
-
-  //位置情報が更新されたときに
+  }, [location, loadGoogleMapsScript]);
 
   useEffect(() => {
     if (isGoogleLoaded) {
@@ -226,7 +224,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
         navigator.geolocation.clearWatch(watcherId.current);
       }
     };
-  }, [isGoogleLoaded, encodedPath, location]);
+  }, [isGoogleLoaded, initializeMap]);
 
   return (
     <>
