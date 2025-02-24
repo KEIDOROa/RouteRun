@@ -179,7 +179,7 @@ export const MakeMap = ({ encodedPath, location, setgoal }) => {
       title: "中間地点",
       icon: {
         path: window.google.maps.SymbolPath.CIRCLE,
-        scale: 6,
+        scale: 0,
         fillColor: "orange",
         fillOpacity: 1,
         strokeWeight: 2,

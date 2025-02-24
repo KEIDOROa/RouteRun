@@ -13,7 +13,8 @@ export const RoundTripMap = ({ distance, seed, routeData, location }) => {
     const params = {
       profile: "foot",
       algorithm: "round_trip",
-      "round_trip.distance": distance * 1000,
+      "round_trip.distance":
+        distance * 800 + Math.floor(Math.random() * 4) * 700,
       "round_trip.seed": seed,
       point: `${location.lat},${location.lng}`,
       key: graphHopperKey,
