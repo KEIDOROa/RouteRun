@@ -6,7 +6,7 @@ export const Start = () => {
     <>
       <div className="start-container">
         <h1>RouteRun</h1>
-        <Link to="home">
+        <Link to="signup">
           <div className="button">
             <p className="button-text">START</p>
           </div>
